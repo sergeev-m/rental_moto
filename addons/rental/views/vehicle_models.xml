@@ -23,9 +23,11 @@
 
                     <field name="maintenance_plan_ids">
                         <list>
-                            <field name="service_type"/>
+                            <field name="service_type_id"/>
                             <field name="interval_km"/>
                             <field name="interval_days"/>
+                            <field name="remind_before_km"/>
+                            <field name="remind_before_days"/>
                         </list>
                     </field>
                 </sheet>

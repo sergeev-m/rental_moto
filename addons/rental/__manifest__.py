@@ -17,6 +17,8 @@
         "views/rental.xml",
         "views/office.xml",
         "views/tarif.xml",
+        "views/service_type.xml",
+        "views/maintenance_due_view.xml",
         "views/menu.xml",
     ],
     "installable": True,

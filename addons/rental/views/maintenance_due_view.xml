@@ -1,0 +1,112 @@
+<odoo>
+    <record id="rental.maintenance_due_form" model="ir.ui.view">
+        <field name="name">rental.maintenance.due.form</field>
+        <field name="model">rental.maintenance.due</field>
+        <field name="arch" type="xml">
+            <form string="Due Maintenance">
+                <header>
+                  <button name="action_perform_service" type="object" string="Провести ТО"
+                          class="btn-primary"
+                          invisible="is_due == False"/>
+                </header>
+                <sheet>
+                  <group>
+                    <field name="vehicle_id"/>
+                    <field name="office_id"/>
+                    <field name="model_id"/>
+                    <field name="service_type_id"/>
+                  </group>
+                  <group string="Параметры">
+                    <field name="last_service_date"/>
+                    <field name="last_service_mileage"/>
+                    <field name="next_service_date"/>
+                    <field name="next_service_mileage"/>
+                    <field name="current_mileage"/>
+                    <field name="km_to_due"/>
+                    <field name="days_to_due"/>
+                  </group>
+                  <group string="Статус">
+                    <field name="is_due"/>
+                    <field name="overdue"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="rental.maintenance_due_list" model="ir.ui.view">
+        <field name="name">rental.maintenance.due.list</field>
+        <field name="model">rental.maintenance.due</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="overdue" decoration-warning="is_due and not overdue">
+                <field name="vehicle_name"/>
+                <field name="office_id"/>
+                <field name="model_id"/>
+                <field name="service_type_id"/>
+                <field name="last_service_date"/>
+                <field name="last_service_mileage"/>
+                <field name="next_service_date"/>
+                <field name="next_service_mileage"/>
+                <field name="current_mileage"/>
+                <field name="km_to_due"/>
+                <field name="days_to_due"/>
+                <button name="action_perform_service"
+                        string="Провести ТО"
+                        type="object"
+                        class="btn-primary"
+                        invisible="is_due == False"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban -->
+  <record id="view_maintenance_due_kanban" model="ir.ui.view">
+    <field name="name">rental.maintenance.due.kanban</field>
+    <field name="model">rental.maintenance.due</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="service_type_id"
+              class="o_kanban_small_column">
+        <field name="color"/>
+        <templates>
+          <t t-name="kanban-box">
+            <div t-attf-class="o_kanban_record oe_kanban_global_click oe_kanban_color_#{record.color.raw_value}">
+            
+              <div class="o_kanban_details">
+                <strong>
+                  <field name="vehicle_name"/>
+                </strong>
+                <div class="text-muted">
+                  <field name="service_type_id"/>
+                </div>
+                <div>
+                  <span>Next date: </span><field name="next_service_date"/>
+                </div>
+                <div>
+                  <span>Next km: </span><field name="next_service_mileage"/>
+                </div>
+                <div>
+                  <span>Δ days: </span><field name="days_to_due"/>
+                  <span style="margin-left:8px">Δ km: </span><field name="km_to_due"/>
+                </div>
+              </div>
+              <div class="o_kanban_footer">
+                <button type="object" name="action_perform_service"
+                        class="btn btn-primary btn-sm"
+                        invisible="is_due == False">
+                  Провести ТО
+                </button>
+              </div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
+
+    <record id="rental.maintenance_due_window" model="ir.actions.act_window">
+        <field name="name">maintenance.due</field>
+        <field name="res_model">rental.maintenance.due</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+</odoo>

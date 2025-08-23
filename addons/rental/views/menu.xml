@@ -39,4 +39,16 @@
               action="rental.manufacturer_window"
               sequence="60"/>
 
+    <menuitem id="menu_service_type"
+              name="Service type"
+              parent="menu_rental_root"
+              action="rental.service_type_window"
+              sequence="70"/>
+
+    <menuitem id="menu_maintenance_due"
+              name="Due Maintenance"
+              parent="menu_rental_root"
+              action="rental.maintenance_due_window"
+              sequence="80"/>
+
 </odoo>

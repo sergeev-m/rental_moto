@@ -19,7 +19,15 @@ class Vehicle(models.Model):
         ("inactive", "Inactive"),
     ], default="available")
 
-    maintenance_status_ids = fields.One2many("rental.maintenance.status", "vehicle_id", string="Maintenance Status")
+    # maintenance_status_ids = fields.One2many("rental.maintenance.status", "vehicle_id", string="Maintenance Status")
+    maintenance_due_ids = fields.One2many(
+        "rental.maintenance.due",
+        "vehicle_id",
+        string="Upcoming Maintenance",
+        readonly=True
+    )
+    maintenance_log_ids = fields.One2many("rental.maintenance.log", "vehicle_id", string="Maintenance Logs")
+
 
     @api.model
     def create(self, vals):
