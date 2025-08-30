@@ -1,0 +1,19 @@
+# Python артефакты
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# VCS
+.git/
+.gitignore
+
+# конфиги и секреты
+.env
+
+# логи
+*.log

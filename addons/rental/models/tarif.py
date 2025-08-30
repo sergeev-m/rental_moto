@@ -29,6 +29,16 @@ class Tarif(models.Model):
         required=True
     )
 
+    min_days = fields.Integer(string="Минимум дней", required=True)
+    max_days = fields.Integer(string="Максимум дней", required=True)
+
+
+    def _compute_display_name(self):
+        for rec in self:
+            values = (rec.price, rec.currency_id.symbol)
+            placeholder = ' '.join(['%s'] * len(values))
+            rec.display_name = placeholder % tuple(values) if values else False
+
     @api.onchange("office_id")
     def _onchange_office_id_set_currency(self):
         """Автоматически ставим валюту из офиса"""

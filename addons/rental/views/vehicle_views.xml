@@ -49,6 +49,7 @@
               <field name="model_id"/>
               <field name="plate_number"/>
               <field name="serial_number"/>
+              <field name="vehicle_type_id"/>
               <field name="mileage"/>
               <field name="office_id"/>
               <field name="status"/>

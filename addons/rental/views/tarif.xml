@@ -8,8 +8,9 @@
                     <group>
                         <field name="office_id" options="{'no_create': False}"/>
                         <field name="vehicle_type_id"/>
+                        <field name="min_days"/>
+                        <field name="max_days"/>
                         <field name="price"/>
-                        <!-- <field name="currency_id" readonly="1"/> -->
                         <field name="currency_id"/>
                     </group>
                 </sheet>
@@ -24,6 +25,8 @@
             <list>
                 <field name="office_id"/>
                 <field name="vehicle_type_id"/>
+                <field name="min_days"/>
+                <field name="max_days"/>
                 <field name="price"/>
                 <field name="currency_id"/>
             </list>

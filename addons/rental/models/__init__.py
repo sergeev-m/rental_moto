@@ -3,7 +3,7 @@ from . import vehicle_model
 from . import vehicle
 from . import maintenance_status
 from . import maintenance_log
-from . import rental
+from . import order
 from . import office
 from . import tarif
 from . import service_type

@@ -12,7 +12,7 @@
     <menuitem id="menu_rental_orders"
               name="Заказы"
               parent="menu_rental_root"
-              action="rental.rental_window"
+              action="rental.order_window"
               sequence="20"/>
 
     <menuitem id="menu_rental_tarif"

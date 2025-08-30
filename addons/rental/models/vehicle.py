@@ -11,6 +11,7 @@ class Vehicle(models.Model):
     serial_number = fields.Char()
     mileage = fields.Integer(string="Current Mileage", default=0)
     office_id = fields.Many2one("rental.office", string="Office")
+    vehicle_type_id = fields.Many2one(related='model_id.vehicle_type_id')
     status = fields.Selection([
         ("available", "Available"),
         ("rented", "Rented"),
@@ -19,7 +20,6 @@ class Vehicle(models.Model):
         ("inactive", "Inactive"),
     ], default="available")
 
-    # maintenance_status_ids = fields.One2many("rental.maintenance.status", "vehicle_id", string="Maintenance Status")
     maintenance_due_ids = fields.One2many(
         "rental.maintenance.due",
         "vehicle_id",
