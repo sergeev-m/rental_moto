@@ -10,19 +10,14 @@ class MaintenanceDueView(models.Model):
     vehicle_id = fields.Many2one("rental.vehicle", readonly=True, index=True)
     office_id = fields.Many2one("rental.office", readonly=True)
     model_id = fields.Many2one("rental.vehicle.model", readonly=True)
-
-    service_type_id = fields.Many2one("rental.service.type", string="Service Type")
-    
+    service_type_id = fields.Many2one("rental.service.type", readonly=True)
     last_service_date = fields.Date(readonly=True)
     last_service_mileage = fields.Integer(readonly=True)
-
     next_service_date = fields.Date(readonly=True)
     next_service_mileage = fields.Integer(readonly=True)
-
     current_mileage = fields.Integer(readonly=True)
     km_to_due = fields.Integer(readonly=True)
     days_to_due = fields.Integer(readonly=True)
-
     is_due = fields.Boolean(readonly=True)
     overdue = fields.Boolean(readonly=True)
     color = fields.Integer(readonly=True)
@@ -122,7 +117,7 @@ class MaintenanceDueView(models.Model):
                 LEFT JOIN last_log ll
                     ON ll.vehicle_id = v.id
                     AND ll.service_type_id = mst.service_type_id
-                WHERE v.status != 'inactive'
+                -- WHERE v.status != 'inactive'
             )
 
             SELECT

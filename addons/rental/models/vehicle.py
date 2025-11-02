@@ -1,10 +1,12 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class Vehicle(models.Model):
     _name = "rental.vehicle"
     _description = "Vehicle"
+    _order="vehicle_type_id,model_id,id desc"
 
+    name = fields.Char(compute='_compute_name', store="True")
     model_id = fields.Many2one("rental.vehicle.model", string="Model", required=True)
     plate_number = fields.Char(required=True)
     year = fields.Char()
@@ -29,6 +31,17 @@ class Vehicle(models.Model):
     maintenance_log_ids = fields.One2many("rental.maintenance.log", "vehicle_id", string="Maintenance Logs")
     order_ids = fields.One2many("rental.order", "vehicle_id", string="Заказы")
 
+    @api.depends('model_id.manufacturer_id.name', 'model_id.name', 'plate_number')
+    def _compute_name(self):
+        for rec in self:
+            values = (
+                rec.model_id.manufacturer_id.name,
+                rec.model_id.name,
+                rec.plate_number
+            )
+            placeholder = ' '.join(['%s'] * len(values))
+            rec.name = placeholder % values if values else False
+
     def write(self, vals):
         res = super().write(vals)
         if 'mileage' in vals:
@@ -47,9 +60,3 @@ class Vehicle(models.Model):
                 'default_office_id': self.office_id.id,
             },
         }
-
-    def _compute_display_name(self):
-        for rec in self:
-            values = (rec.model_id.name, rec.plate_number)
-            placeholder = ' '.join(['%s'] * len(values))
-            rec.display_name = placeholder % values if values else False

@@ -6,7 +6,7 @@ class VehicleModel(models.Model):
     _description = "Vehicle Model"
 
     name = fields.Char(required=True)
-    manufacturer = fields.Many2one('rental.manufacturer', required=True)
+    manufacturer_id = fields.Many2one('rental.manufacturer', required=True)
     vehicle_type_id = fields.Many2one("rental.vehicle.type", string="Vehicle Type", required=True)
     maintenance_plan_ids = fields.One2many("rental.vehicle.model.maintenance", "model_id", string="Maintenance Plan")
 
@@ -25,6 +25,15 @@ class VehicleModel(models.Model):
         string='Image',
         attachment=True,
     )
+
+    def _compute_display_name(self):
+        for rec in self:
+            values = (
+                rec.manufacturer_id.name,
+                rec.name,
+            )
+            placeholder = ' '.join(['%s'] * len(values))
+            rec.display_name = placeholder % values if values else False
 
 
 class VehicleModelMaintenance(models.Model):

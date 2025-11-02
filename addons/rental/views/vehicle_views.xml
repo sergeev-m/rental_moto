@@ -34,8 +34,8 @@
               <field name="maintenance_due_ids" nolabel="1">
                 <list decoration-danger="overdue" decoration-warning="is_due and not overdue">
                   <field name="service_type_id"/>
-                  <field name="next_service_mileage"/>
-                  <field name="next_service_date"/>
+                  <field name="next_service_mileage" optional="hide"/>
+                  <field name="next_service_date" optional="hide"/>
                   <field name="km_to_due"/>
                   <field name="days_to_due"/>
                 </list>
@@ -67,12 +67,13 @@
     <field name="model">rental.vehicle</field>
     <field name="arch" type="xml">
         <list>
-          <field name="office_id"/>
-          <field name="model_id"/>
-          <field name="plate_number"/>
-          <field name="year"/>
-          <field name="purchase_price"/>
-          <field name="vehicle_type_id"/>
+          <field name="name"/>
+          <field name="office_id" optional="hide"/>
+          <field name="model_id" optional="hide"/>
+          <field name="plate_number" optional="hide"/>
+          <field name="year" optional="hide"/>
+          <field name="purchase_price" optional="hide"/>
+          <field name="vehicle_type_id" optional="hide"/>
           <field name="mileage"/>
           <field name="status"/>
         </list>

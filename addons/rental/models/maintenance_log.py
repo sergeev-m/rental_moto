@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 class RentalMaintenanceLog(models.Model):
     _name = "rental.maintenance.log"
     _description = "Maintenance Log"
+    _order = 'id desc'
 
     name = fields.Char(compute='_compute_name')
     vehicle_id = fields.Many2one("rental.vehicle", string="Vehicle", required=True)
