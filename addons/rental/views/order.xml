@@ -17,6 +17,7 @@
                 <field name="end_mileage" optional="hide"/>
                 <field name="tarif_id" optional="hide"/>
                 <field name="tarif_price"/>
+                <field name="extra_expenses" optional="hide"/>
                 <field name="total_amount" sum="total amount"/>
                 <field name="currency_id" optional="hide"/>
                 <field name="deposit_amount" optional="hide"/>
@@ -68,9 +69,10 @@
                         <group>
                             <field name="rental_days"/>
                             <field name="rental_hours"/>
+                            <field name="tarif_id"/>
+                            <field name="tarif_price"/>
                             <field name="extra_expenses"/>
                             <field name="deposit_amount"/>
-                            <field name="tarif_price"/>
                             <field name="total_amount"/>
                         </group>
                         <group>
@@ -78,7 +80,7 @@
                             <field name="end_date"/>
                             <field name="start_mileage"/>
                             <field name="end_mileage"/>
-                            <field name="tarif_id"/>
+                            
                         </group>
                     </group>
                 </sheet>
