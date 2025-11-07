@@ -10,7 +10,7 @@
                 <field name="vehicle_id"/>
                 <field name="start_date" optional="hide"/>
                 <field name="end_date" optional="hide"/>
-                <field name="rental_days"/>
+                <field name="rental_days" optional="hide"/>
                 <field name="rental_hours" optional="hide"/>
                 <field name="start_mileage" optional="hide"/>
                 <field name="end_mileage" optional="hide"/>
