@@ -6,11 +6,11 @@
             <form string="Vehicle model">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_view_tarifs"
+                        <button name="action_view_tariffs"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-list">
-                          <field string="Tarifs" name="tarif_ids" widget="statinfo"/>
+                          <field string="Tariffs" name="tariff_ids" widget="statinfo"/>
                         </button>
                     </div>
                     <group>
@@ -43,7 +43,7 @@
     </record>
 
     <record id="rental.vehicle_model_list" model="ir.ui.view">
-        <field name="name">rental.tarif.tree</field>
+        <field name="name">rental.vehicle.model.tree</field>
         <field name="model">rental.vehicle.model</field>
         <field name="arch" type="xml">
             <list>

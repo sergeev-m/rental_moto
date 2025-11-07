@@ -30,10 +30,10 @@
               sequence="90"/>
 
     <!-- Reference dictionaries -->
-    <menuitem id="menu_rental_tarif"
+    <menuitem id="menu_rental_tariff"
               name="Tariffs"
               parent="menu_rental_reference_root"
-              action="rental_tarif_window"
+              action="rental_tariff_window"
               sequence="10"/>
 
     <menuitem id="menu_rental_office"

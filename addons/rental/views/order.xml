@@ -14,8 +14,8 @@
                 <field name="rental_hours" optional="hide"/>
                 <field name="start_mileage" optional="hide"/>
                 <field name="end_mileage" optional="hide"/>
-                <field name="tarif_id" optional="hide"/>
-                <field name="tarif_price" optional="show"/>
+                <field name="tariff_id" optional="hide"/>
+                <field name="tariff_price" optional="show"/>
                 <field name="extra_expenses" optional="hide" sum="Total"/>
                 <field name="amount_total" sum="amount total"/>
                 <field name="currency_id" optional="hide"/>
@@ -74,8 +74,8 @@
                         <group>
                             <field name="rental_days"/>
                             <field name="rental_hours"/>
-                            <field name="tarif_id"/>
-                            <field name="tarif_price"/>
+                            <field name="tariff_id"/>
+                            <field name="tariff_price"/>
                             <field name="extra_expenses"/>
                             <field name="deposit_amount"/>
                             <field name="amount_total"/>

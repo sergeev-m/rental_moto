@@ -4,7 +4,7 @@ from . import vehicle
 from . import maintenance_log
 from . import order
 from . import office
-from . import tarif
+from . import tariff
 from . import service_type
 from . import maintenance_due_view
 from . import renter

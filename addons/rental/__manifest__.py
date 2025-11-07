@@ -15,7 +15,7 @@
         "views/maintenance_log.xml",
         "views/order.xml",
         "views/office.xml",
-        "views/tarif.xml",
+        "views/tariff.xml",
         "views/service_type.xml",
         "views/maintenance_due_view.xml",
         "wizard/renter_photo_wizard.xml",

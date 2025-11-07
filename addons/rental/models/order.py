@@ -25,7 +25,7 @@ class RentalOrder(models.Model):
 
     start_mileage = fields.Integer()
     end_mileage = fields.Integer()
-    currency_id = fields.Many2one(related='tarif_id.currency_id')
+    currency_id = fields.Many2one(related='tariff_id.currency_id')
     amount_total = fields.Monetary(currency_field="currency_id", compute="_compute_amount_total", store=True)
     deposit_amount = fields.Float()
 
@@ -51,22 +51,25 @@ class RentalOrder(models.Model):
         readonly=True,
     )
 
-    tarif_id = fields.Many2one(
-        "rental.tarif",
-        string="Tarif",
+    tariff_id = fields.Many2one(
+        "rental.tariff",
+        string="Tariff",
         required=True,
         domain="[('office_id', '=', office_id), ('vehicle_model_id', '=', vehicle_model_id)]",
     )
-    tarif_price = fields.Monetary(
+    tariff_price = fields.Monetary(
         string="Tariff Price",
         currency_field="currency_id",
         # readonly=True
     )
 
-    @api.onchange('tarif_id')
+    @api.onchange('tariff_id')
     def _onchange_tarif_id(self):
-        if self.tarif_id:
-            self.tarif_price = self.tarif_id.price_per_unit
+        if self.state =='done':
+            return
+
+        if self.tariff_id:
+            self.tariff_price = self.tariff_id.price_per_unit
 
     @api.onchange('vehicle_id')
     def _onchange_vehicle_id(self):
@@ -82,28 +85,28 @@ class RentalOrder(models.Model):
         if not (self.vehicle_id and self.rental_hours):
             return
 
-        self.tarif_id = False
-        tarif = self.env['rental.tarif'].search([
+        self.tariff_id = False
+        tariff = self.env['rental.tariff'].search([
             ('vehicle_model_id', '=', self.vehicle_model_id.id),
             ('period_type', '=', 'hour'),
         ], limit=1)
-        self.tarif_id = tarif.id if tarif else False
+        self.tariff_id = tariff.id if tariff else False
 
 
     @api.onchange('rental_days', 'vehicle_id')
     def _onchange_rental_days(self):
-        self.tarif_id = False
+        self.tariff_id = False
 
         if not (self.vehicle_id and self.rental_days):
             return
 
-        tarif = self.env['rental.tarif'].search([
+        tariff = self.env['rental.tariff'].search([
             ('vehicle_model_id', '=', self.vehicle_model_id.id),
             ('period_type', '=', 'day'),
             ('min_period', '<=', self.rental_days),
         ], order='min_period desc', limit=1)
 
-        self.tarif_id = tarif.id if tarif else False
+        self.tariff_id = tariff.id if tariff else False
 
     @api.depends("start_date", "rental_days")
     def _compute_end_date(self):
@@ -119,21 +122,21 @@ class RentalOrder(models.Model):
             else:
                 rec.end_date = False
         
-    @api.depends('rental_days', 'rental_hours', 'tarif_price', 'extra_expenses')
+    @api.depends('rental_days', 'rental_hours', 'tariff_price', 'extra_expenses')
     def _compute_amount_total(self):
         for rec in self:
             total = 0
 
-            if rec.tarif_price and rec.rental_days:
-                total = rec.rental_days * rec.tarif_price
+            if rec.tariff_price and rec.rental_days:
+                total = rec.rental_days * rec.tariff_price
 
             if rec.rental_hours:
-                tarif_hour = rec.env['rental.tarif'].search([
+                tariff_hour = rec.env['rental.tariff'].search([
                     ('vehicle_model_id', '=', rec.vehicle_id.model_id.id),
                     ('period_type', '=', 'hour'),
                 ], limit=1)
-                if tarif_hour:
-                    total += rec.rental_hours * tarif_hour.price_per_unit
+                if tariff_hour:
+                    total += rec.rental_hours * tariff_hour.price_per_unit
             
             if rec.extra_expenses:
                 total += rec.extra_expenses

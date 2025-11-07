@@ -34,7 +34,7 @@ class VehicleModel(models.Model):
         string='Image',
         attachment=True,
     )
-    tarif_ids = fields.Many2one('rental.tarif')
+    tariff_ids = fields.Many2one('rental.tariff')
 
     def _compute_display_name(self):
         for rec in self:
@@ -62,11 +62,11 @@ class VehicleModel(models.Model):
                     f'The vehicle model "{rec.name}" already exists for this manufacturer.'
                 )
 
-    def action_view_tarifs(self):
+    def action_view_tariffs(self):
         return {
             "type": "ir.actions.act_window",
             "name": "Tarifs",
-            "res_model": self['tarif_ids']._name,  # noqa
+            "res_model": self['tariff_ids']._name,  # noqa
             "view_mode": "list,form",
             "domain": [("vehicle_model_id", "=", self.id)],
             "context": {

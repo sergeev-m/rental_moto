@@ -2,17 +2,18 @@ from odoo import models, fields, api
 
 
 class Tarif(models.Model):
-    _name = "rental.tarif"
+    _name = "rental.tariff"
     _description = "Tarif"
     _order = "vehicle_model_id, period_type, min_period asc"
     _sql_constraints = [
         (
-            'unique_tarif',
+            'unique_tariff',
             'unique(vehicle_model_id, period_type, min_period)',
             'Tariff already exists for this model and period.'
         ),
     ]
 
+    name = fields.Char(compute='_compute_name')
     active = fields.Boolean(default=True)
     office_id = fields.Many2one(
         "rental.office",
@@ -46,7 +47,7 @@ class Tarif(models.Model):
         required=True
     )
 
-    def _compute_display_name(self):
+    def _compute_name(self):
         for rec in self:
             values = (
                 rec.office_id.city,
@@ -57,7 +58,7 @@ class Tarif(models.Model):
                 rec.currency_id.symbol,
             )
             placeholder = ' '.join(['%s'] * len(values))
-            rec.display_name = placeholder % tuple(values) if values else False
+            rec.name = placeholder % tuple(values) if values else False
 
     @api.onchange("office_id")
     def _onchange_office_id_set_currency(self):
