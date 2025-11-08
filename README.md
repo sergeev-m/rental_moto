@@ -1,1 +1,1 @@
-# rental_moto
+# rentalal_odoo

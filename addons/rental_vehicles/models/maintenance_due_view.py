@@ -29,19 +29,19 @@ class MaintenanceDueView(models.Model):
             [('id', '=', self.service_type_id.id)],
             limit=1
         )
-        log = self.env["rental.maintenance.log"].create({
+        maintenance = self.env["rental.maintenance"].create({
             'vehicle_id': self.vehicle_id.id,
             'mileage': self.current_mileage,
             'note': f'ТО ({self.service_type_id.name})',
-            'cost_line_ids': [(0, 0, {
+            'maintenance_line_ids': [(0, 0, {
                 'service_type_id': service_type.id,
                 'cost': service_type.default_cost,
             })]
         })
         return {
             "type": "ir.actions.act_window",
-            "res_model": "rental.maintenance.log",
-            "res_id": log.id,
+            "res_model": "rental.maintenance",
+            "res_id": maintenance.id,
             "view_mode": "form",
             "target": "current",
         }
@@ -58,8 +58,8 @@ class MaintenanceDueView(models.Model):
                     l.date        AS service_date,
                     l.mileage     AS mileage,
                     cl.id
-                FROM rental_maintenance_cost_line cl
-                JOIN rental_maintenance_log l ON l.id = cl.log_id
+                FROM rental_maintenance_line cl
+                JOIN rental_maintenance l ON l.id = cl.maintenance_id
                 ORDER BY l.vehicle_id, cl.service_type_id, l.date DESC, cl.id DESC
             ),
 
@@ -112,7 +112,7 @@ class MaintenanceDueView(models.Model):
 
                 FROM rental_vehicle v
                 JOIN rental_vehicle_model m ON m.id = v.model_id
-                JOIN rental_vehicle_model_maintenance mst ON mst.model_id = m.id
+                JOIN rental_maintenance_plan mst ON mst.model_id = m.id
                 JOIN rental_service_type st ON st.id = mst.service_type_id
                 LEFT JOIN last_log ll
                     ON ll.vehicle_id = v.id

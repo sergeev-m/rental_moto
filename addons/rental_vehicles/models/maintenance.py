@@ -2,9 +2,9 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
 
-class RentalMaintenanceLog(models.Model):
-    _name = "rental.maintenance.log"
-    _description = "Maintenance Log"
+class RentalMaintenance(models.Model):
+    _name = "rental.maintenance"
+    _description = "Maintenance"
     _order = 'id desc'
 
     name = fields.Char(compute='_compute_name')
@@ -13,20 +13,20 @@ class RentalMaintenanceLog(models.Model):
     mileage = fields.Integer(required=True)
     note = fields.Text("Notes")
 
-    cost_line_ids = fields.One2many("rental.maintenance.cost.line", "log_id", string="Cost Lines")
+    maintenance_line_ids = fields.One2many("rental.maintenance.line", "maintenance_id", string="Maintenance Lines")
     total_cost = fields.Float("Total Cost", compute="_compute_total_cost", store=True)
     currency_id = fields.Many2one(related='vehicle_id.office_id.currency_id')
 
-    @api.depends('cost_line_ids')
+    @api.depends('maintenance_line_ids')
     def _compute_name(self):
         for rec in self:
-            cost_list = rec.cost_line_ids.mapped('service_type_id.name')
+            cost_list = rec.maintenance_line_ids.mapped('service_type_id.name')
             rec.name = '/'.join(cost_list)
 
-    @api.depends("cost_line_ids.cost")
+    @api.depends("maintenance_line_ids.cost")
     def _compute_total_cost(self):
         for rec in self:
-            rec.total_cost = sum(rec.cost_line_ids.mapped('cost'))
+            rec.total_cost = sum(rec.maintenance_line_ids.mapped('cost'))
 
     @api.constrains("mileage")
     def _check_mileage(self):
@@ -40,11 +40,11 @@ class RentalMaintenanceLog(models.Model):
             self.mileage = self.vehicle_id.mileage
 
 
-class RentalMaintenanceCostLine(models.Model):
-    _name = "rental.maintenance.cost.line"
-    _description = "Maintenance Cost Line"
+class RentalMaintenanceLine(models.Model):
+    _name = "rental.maintenance.line"
+    _description = "Maintenance Line"
 
-    log_id = fields.Many2one("rental.maintenance.log", string="Maintenance Log", ondelete="cascade")
+    maintenance_id = fields.Many2one("rental.maintenance", string="Maintenance", ondelete="cascade")
     service_type_id = fields.Many2one("rental.service.type", string="Service Type", required=True)
     cost = fields.Float("Cost")
 

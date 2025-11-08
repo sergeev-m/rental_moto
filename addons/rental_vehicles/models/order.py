@@ -14,21 +14,17 @@ class RentalOrder(models.Model):
         required=True,
         domain="[('office_id', '=', office_id), ('status', '=', 'available')]"
     )
-    customer_name = fields.Char()
     renter_id = fields.Many2one('rental.renter')
     rental_days = fields.Integer(required=True, default=1)
     rental_hours = fields.Integer()
     start_date = fields.Datetime(required=True, default=fields.Datetime.now)
     end_date = fields.Datetime(string="End Date", compute="_compute_end_date", store=True)
     extra_expenses = fields.Float(string="Extra Expenses", default=0.0)
-
-
     start_mileage = fields.Integer()
     end_mileage = fields.Integer()
     currency_id = fields.Many2one(related='tariff_id.currency_id')
     amount_total = fields.Monetary(currency_field="currency_id", compute="_compute_amount_total", store=True)
     deposit_amount = fields.Float()
-
     state = fields.Selection(
         [
             ("draft", "Draft"),
@@ -39,7 +35,6 @@ class RentalOrder(models.Model):
         default="draft",
         index=True
     )
-
     vehicle_type_id = fields.Many2one(
         related="vehicle_id.vehicle_type_id",
         store=True,
@@ -50,7 +45,6 @@ class RentalOrder(models.Model):
         store=True,
         readonly=True,
     )
-
     tariff_id = fields.Many2one(
         "rental.tariff",
         string="Tariff",
@@ -176,3 +170,13 @@ class RentalOrder(models.Model):
             "target": "new",
             "context": {"default_order_id": self.id},
         }
+
+
+    def _compute_display_name(self):
+        for rec in self:
+            values = (
+                rec.id,
+                rec.vehicle_id.name,
+            )
+            placeholder = ' '.join(['%s'] * len(values))
+            rec.display_name = placeholder % tuple(values) if values else False

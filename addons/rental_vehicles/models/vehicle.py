@@ -29,7 +29,7 @@ class Vehicle(models.Model):
         string="Upcoming Maintenance",
         readonly=True
     )
-    maintenance_log_ids = fields.One2many("rental.maintenance.log", "vehicle_id", string="Maintenance Logs")
+    maintenance_ids = fields.One2many("rental.maintenance", "vehicle_id", string="Maintenance")
     order_ids = fields.One2many("rental.order", "vehicle_id", string="Заказы")
 
     @api.depends('model_id.manufacturer_id.name', 'model_id.name', 'plate_number')

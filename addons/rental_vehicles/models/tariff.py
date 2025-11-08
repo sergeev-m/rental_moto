@@ -3,7 +3,7 @@ from odoo import models, fields, api
 
 class Tarif(models.Model):
     _name = "rental.tariff"
-    _description = "Tarif"
+    _description = "Tariff"
     _order = "vehicle_model_id, period_type, min_period asc"
     _sql_constraints = [
         (

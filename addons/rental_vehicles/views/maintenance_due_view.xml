@@ -106,7 +106,7 @@
 
 
     <record id="rental.maintenance_due_window" model="ir.actions.act_window">
-        <field name="name">maintenance.due</field>
+        <field name="name">maintenance due</field>
         <field name="res_model">rental.maintenance.due</field>
         <field name="view_mode">list,form,kanban</field>
     </record>

@@ -45,7 +45,7 @@
 
           <notebook>
             <page string="Maintenance">
-              <field name="maintenance_log_ids">
+              <field name="maintenance_ids">
                 <list>
                   <field name="name"/>
                   <field name="date"/>
