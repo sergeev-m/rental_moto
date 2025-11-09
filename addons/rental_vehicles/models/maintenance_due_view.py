@@ -88,7 +88,8 @@ class MaintenanceDueView(models.Model):
 
                     CASE
                         WHEN mst.interval_km > 0 THEN
-                            COALESCE(ll.mileage, 0) + mst.interval_km
+                            -- COALESCE(ll.mileage, 0) + mst.interval_km
+                            CEIL((COALESCE(ll.mileage, 0) + mst.interval_km) / 100.0) * 100
                         ELSE NULL
                     END AS next_service_mileage,
 
@@ -96,7 +97,8 @@ class MaintenanceDueView(models.Model):
                      -- Остаток до ТО
                     CASE
                         WHEN mst.interval_km > 0 THEN
-                            (COALESCE(ll.mileage, 0) + mst.interval_km) - v.mileage
+                            -- (COALESCE(ll.mileage, 0) + mst.interval_km) - v.mileage
+                            (CEIL((COALESCE(ll.mileage, 0) + mst.interval_km) / 100.0) * 100) - v.mileage
                         ELSE NULL
                     END AS km_to_due,
 

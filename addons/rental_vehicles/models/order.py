@@ -8,6 +8,7 @@ class RentalOrder(models.Model):
     _description = "Rental Order"
     _order = "start_date desc"
 
+    active = fields.Boolean(default=True)
     office_id = fields.Many2one('rental_vehicles.office')
     vehicle_id = fields.Many2one(
         "rental_vehicles.vehicle",
@@ -25,7 +26,7 @@ class RentalOrder(models.Model):
     currency_id = fields.Many2one(related='tariff_id.currency_id')
     amount_total = fields.Monetary(currency_field="currency_id", compute="_compute_amount_total", store=True)
     deposit_amount = fields.Float()
-    state = fields.Selection(
+    status = fields.Selection(
         [
             ("draft", "Draft"),
             ("active", "Active"),
@@ -59,7 +60,7 @@ class RentalOrder(models.Model):
 
     @api.onchange('tariff_id')
     def _onchange_tarif_id(self):
-        if self.state =='done':
+        if self.status =='done':
             return
 
         if self.tariff_id:
@@ -139,26 +140,26 @@ class RentalOrder(models.Model):
 
     def action_start_rental(self):
         for rec in self:
-            if rec.state != "draft":
+            if rec.status != "draft":
                 raise ValidationError("должен быть статус draft")
-        self.state = "active"
+        self.status = "active"
         self.vehicle_id.status = "rented"
 
     def action_end_rental(self):
         for rec in self:
-            if rec.state != "active":
+            if rec.status != "active":
                 raise ValidationError("Завершить можно только активную аренду.")
-        self.state = "done"
+        self.status = "done"
         self.vehicle_id.mileage = max(self.vehicle_id.mileage, self.end_mileage)
         self.vehicle_id.status = "available"
 
     def action_cancel(self):
         for rec in self:
-            if rec.state not in ("draft", "active"):
+            if rec.status not in ("draft", "active"):
                 raise ValidationError("Отменить можно только черновик или активную аренду.")
-            if rec.state == "active":
+            if rec.status == "active":
                 rec.vehicle_id.status = "available"
-            rec.state = "cancelled"
+            rec.status = "cancelled"
 
     def action_open_photo_wizard(self):
         self.ensure_one()

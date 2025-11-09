@@ -28,5 +28,5 @@ check_config "db_password" "$PASSWORD"
 wait-for-psql.py ${DB_ARGS[@]} --timeout=30
 # exec odoo "${DB_ARGS[@]}" --dev=all
 # exec ddtrace-run odoo "${DB_ARGS[@]}" --dev=xml
-exec odoo "${DB_ARGS[@]}" -u rental --without-demo=all --dev=xml --log-level=debug #--log-level=debug_sql
+exec odoo "${DB_ARGS[@]}" -u rental_vehicles --without-demo=all --dev=xml --log-level=debug #--log-level=debug_sql
 exit 1
