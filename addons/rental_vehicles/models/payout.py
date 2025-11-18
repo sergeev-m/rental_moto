@@ -85,8 +85,7 @@ class ManagerPayout(models.Model):
     order_ids = fields.Many2many("rental_vehicles.order", string="Orders")
     currency_id = fields.Many2one(
         "res.currency",
-        related="payout_id.currency_id",
-        store=True,
+        related="payout_id.currency_id"
     )
     revenue = fields.Monetary(
         "Revenue",

@@ -35,6 +35,7 @@
                             <field string="Заказы" name="order_ids" widget="statinfo"/>
                         </button>
                     </div>
+                    <field name="currency_id" invisible="1"/>
                     <group>
                         <group>
                             <field name="office_id" required="1"/>
@@ -52,12 +53,13 @@
                     <field name="manager_payout_ids">
                         <list create="0" delete="0">
                             <field name="manager_id"/>
-                            <field name="salary_fixed_converted"/>
                             <field name="revenue" sum="Total"/>
                             <field name="percent_part" readonly="1" sum="Total"/>
+                            <field name="salary_fixed_converted" sum="Total"/>
                             <field name="total_payout" readonly="1" sum="Total"/>
                         </list>
                         <form>
+                            <field name="currency_id" invisible="1"/>
                             <group>
                                 <field name="manager_id" readonly="1"/>
                                 <field name="revenue"/>
@@ -66,7 +68,7 @@
                                 <field name="total_payout"/>
                             </group>
                             <group string="Orders">
-                                <field name="order_ids" nolabel="1" readonly="1"/>
+                                <field name="order_ids" colspan="3" nolabel="1" readonly="1"/>
                             </group>
                         </form>
                     </field>
