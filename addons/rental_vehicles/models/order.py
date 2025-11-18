@@ -4,6 +4,52 @@ from datetime import timedelta
 from odoo.exceptions import ValidationError
 
 
+class StatusBarOrder(models.Model):
+    _name = "rental_vehicles.order.status"
+    _order = "sequence"
+    _description = "This is status of order."
+
+    sequence = fields.Integer("Sequence", default=10)
+    name = fields.Char("Status")
+    code = fields.Char("Code")
+    decoration = fields.Selection([
+        ("success", "Success"),
+        ("danger", "Danger"),
+        ("warning", "Warning"),
+        ("info", "Info"),
+    ])
+
+    def _search_by_code(self, code: str):
+        rec = self.search([('code', '=', code)], limit=1)
+        return rec
+
+    @property
+    def _active_status(self):
+        return self._search_by_code('active')
+
+    @property
+    def _done_status(self):
+        return self._search_by_code('done')
+
+    @property
+    def _cancelled_status(self):
+        return self._search_by_code('cancelled')
+
+    def _prepare_code(self, vals: dict):
+        if code := vals.get('code'):
+            vals['code'] = code.lower()
+        return vals
+
+    def create(self, vals):
+        vals = self._prepare_code(vals)
+        rec = super(StatusBarOrder, self).create(vals)
+        return rec
+
+    def write(self, vals):
+        vals = self._prepare_code(vals)
+        return super(StatusBarOrder, self).write(vals)
+
+
 class RentalOrder(models.Model):
     _name = "rental_vehicles.order"
     _description = "Rental Order"
@@ -27,16 +73,7 @@ class RentalOrder(models.Model):
     currency_id = fields.Many2one(related='tariff_id.currency_id')
     amount_total = fields.Monetary(currency_field="currency_id", compute="_compute_amount_total", store=True)
     deposit_amount = fields.Float()
-    # status = fields.Selection(
-    #     [
-    #         ("draft", "Draft"),
-    #         ("active", "Active"),
-    #         ("done", "Done"),
-    #         ("cancelled", "Cancelled"),
-    #     ],
-    #     default="draft",
-    #     index=True
-    # )
+    
     status_id = fields.Many2one(
         "rental_vehicles.order.status",
         "Status",
@@ -200,50 +237,3 @@ class RentalOrder(models.Model):
             )
             placeholder = ' '.join(['%s'] * len(values))
             rec.display_name = placeholder % tuple(values) if values else False
-
-
-
-class StatusBarOrder(models.Model):
-    _name = "rental_vehicles.order.status"
-    _order = "sequence"
-    _description = "This is status of order."
-
-    sequence = fields.Integer("Sequence", default=10)
-    name = fields.Char("Status")
-    code = fields.Char("Code")
-    decoration = fields.Selection([
-        ("success", "Success"),
-        ("danger", "Danger"),
-        ("warning", "Warning"),
-        ("info", "Info"),
-    ])
-
-    def _search_by_code(self, code: str):
-        rec = self.search([('code', '=', code)], limit=1)
-        return rec
-
-    @property
-    def _active_status(self):
-        return self._search_by_code('active')
-
-    @property
-    def _done_status(self):
-        return self._search_by_code('done')
-
-    @property
-    def _cancelled_status(self):
-        return self._search_by_code('cancelled')
-
-    def _prepare_code(self, vals: dict):
-        if code := vals.get('code'):
-            vals['code'] = code.lower()
-        return vals
-
-    def create(self, vals):
-        vals = self._prepare_code(vals)
-        rec = super(StatusBarOrder, self).create(vals)
-        return rec
-
-    def write(self, vals):
-        vals = self._prepare_code(vals)
-        return super(StatusBarOrder, self).write(vals)
