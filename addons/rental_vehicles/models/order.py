@@ -1,3 +1,4 @@
+from logging import PlaceHolder
 from odoo import models, fields, api
 from datetime import timedelta
 from odoo.exceptions import ValidationError
@@ -26,16 +27,31 @@ class RentalOrder(models.Model):
     currency_id = fields.Many2one(related='tariff_id.currency_id')
     amount_total = fields.Monetary(currency_field="currency_id", compute="_compute_amount_total", store=True)
     deposit_amount = fields.Float()
-    status = fields.Selection(
-        [
-            ("draft", "Draft"),
-            ("active", "Active"),
-            ("done", "Done"),
-            ("cancelled", "Cancelled"),
-        ],
-        default="draft",
-        index=True
+    # status = fields.Selection(
+    #     [
+    #         ("draft", "Draft"),
+    #         ("active", "Active"),
+    #         ("done", "Done"),
+    #         ("cancelled", "Cancelled"),
+    #     ],
+    #     default="draft",
+    #     index=True
+    # )
+    status_id = fields.Many2one(
+        "rental_vehicles.order.status",
+        "Status",
+        default=lambda self: self.env["rental_vehicles.order.status"].search(
+            [("code", "=ilike", "draft")],
+            limit=1
+        )
     )
+    status_decoration = fields.Selection(related="status_id.decoration")
+    status_code = fields.Char(
+        string="Status Code",
+        related="status_id.code",
+        store=True,
+    )
+
     vehicle_type_id = fields.Many2one(
         related="vehicle_id.vehicle_type_id",
         store=True,
@@ -60,7 +76,7 @@ class RentalOrder(models.Model):
 
     @api.onchange('tariff_id')
     def _onchange_tarif_id(self):
-        if self.status =='done':
+        if self.status_code =='done':
             return
 
         if self.tariff_id:
@@ -140,26 +156,29 @@ class RentalOrder(models.Model):
 
     def action_start_rental(self):
         for rec in self:
-            if rec.status != "draft":
+            if rec.status_code != "draft":
                 raise ValidationError("должен быть статус draft")
-        self.status = "active"
+        active = self.status_id._active_status
+        self.status_id = active.id
         self.vehicle_id.status = "rented"
 
     def action_end_rental(self):
         for rec in self:
-            if rec.status != "active":
+            if rec.status_code != "active":
                 raise ValidationError("Завершить можно только активную аренду.")
-        self.status = "done"
+        done = self.status_id._done_status
+        self.status_id = done.id
         self.vehicle_id.mileage = max(self.vehicle_id.mileage, self.end_mileage)
         self.vehicle_id.status = "available"
 
     def action_cancel(self):
         for rec in self:
-            if rec.status not in ("draft", "active"):
+            if rec.status_code not in ("draft", "active"):
                 raise ValidationError("Отменить можно только черновик или активную аренду.")
-            if rec.status == "active":
+            if rec.status_code == "active":
                 rec.vehicle_id.status = "available"
-            rec.status = "cancelled"
+            cancelled = self.status_id._cancelled_status
+            rec.status_id = cancelled.id
 
     def action_open_photo_wizard(self):
         self.ensure_one()
@@ -181,3 +200,50 @@ class RentalOrder(models.Model):
             )
             placeholder = ' '.join(['%s'] * len(values))
             rec.display_name = placeholder % tuple(values) if values else False
+
+
+
+class StatusBarOrder(models.Model):
+    _name = "rental_vehicles.order.status"
+    _order = "sequence"
+    _description = "This is status of order."
+
+    sequence = fields.Integer("Sequence", default=10)
+    name = fields.Char("Status")
+    code = fields.Char("Code")
+    decoration = fields.Selection([
+        ("success", "Success"),
+        ("danger", "Danger"),
+        ("warning", "Warning"),
+        ("info", "Info"),
+    ])
+
+    def _search_by_code(self, code: str):
+        rec = self.search([('code', '=', code)], limit=1)
+        return rec
+
+    @property
+    def _active_status(self):
+        return self._search_by_code('active')
+
+    @property
+    def _done_status(self):
+        return self._search_by_code('done')
+
+    @property
+    def _cancelled_status(self):
+        return self._search_by_code('cancelled')
+
+    def _prepare_code(self, vals: dict):
+        if code := vals.get('code'):
+            vals['code'] = code.lower()
+        return vals
+
+    def create(self, vals):
+        vals = self._prepare_code(vals)
+        rec = super(StatusBarOrder, self).create(vals)
+        return rec
+
+    def write(self, vals):
+        vals = self._prepare_code(vals)
+        return super(StatusBarOrder, self).write(vals)

@@ -76,7 +76,9 @@
           <field name="purchase_price" optional="hide"/>
           <field name="vehicle_type_id" optional="hide"/>
           <field name="mileage"/>
-          <field name="status"/>
+          <field name="status" 
+                 decoration-info="status == 'rented'"
+                 decoration-danger="status == 'booked'"/>
         </list>
     </field>
   </record>

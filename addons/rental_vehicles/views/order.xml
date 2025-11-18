@@ -1,11 +1,42 @@
 <odoo>
-    <record id="rental_vehicles.order_tree" model="ir.ui.view">
+    
+    <record id="rental_vehicles.order_status_list" model="ir.ui.view">
+      <field name="name">rental_vehicles.order.status.list</field>
+      <field name="model">rental_vehicles.order.status</field>
+      <field name="arch" type="xml">
+        <list string="Status" editable="top">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="code" placeholder="e.g 'draft', 'active', 'done', 'cancelled"/>
+            <field name="decoration"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="rental_vehicles.order_status_action" model="ir.actions.act_window">
+        <field name="name">School Status</field>
+        <field name="res_model">rental_vehicles.order.status</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <menuitem id="rental_vehicles.order_status_menu"
+                action="rental_vehicles.order_status_action"
+                name="Order Status"
+                parent="menu_rental_vehicles_reference_root"
+                sequence="70"
+    />
+
+    <record id="rental_vehicles.order_list" model="ir.ui.view">
         <field name="name">rental_vehicles.order.tree</field>
         <field name="model">rental_vehicles.order</field>
         <field name="arch" type="xml">
-            <list
-                decoration-danger="status == 'cancelled'"
-                decoration-success="status == 'active'">
+            <list 
+                delete="0"
+                decoration-danger="status_decoration == 'danger'"
+                decoration-success="status_decoration == 'success'"
+                decoration-warning="status_decoration == 'warning'"
+                decoration-info="status_decoration == 'info'"
+            >
                 <field name="office_id" optional="hide"/>
                 <field name="vehicle_id" class="o_col_3"/>
                 <field name="start_date" optional="hide"/>
@@ -15,12 +46,13 @@
                 <field name="start_mileage" optional="hide"/>
                 <field name="end_mileage" optional="hide"/>
                 <field name="tariff_id" optional="hide"/>
-                <field name="tariff_price" optional="show"/>
+                <field name="tariff_price" optional="hide"/>
                 <field name="extra_expenses" optional="hide" sum="Total"/>
                 <field name="amount_total" sum="amount total"/>
                 <field name="currency_id" optional="hide"/>
                 <field name="deposit_amount" optional="hide"/>
-                <field name="status" optional="hide"/>
+                <field name="status_id" optional="hide"/>
+                <field name="status_code" optional="hide"/>
             </list>
         </field>
     </record>
@@ -29,25 +61,25 @@
         <field name="name">rental_vehicles.order.form</field>
         <field name="model">rental_vehicles.order</field>
         <field name="arch" type="xml">
-            <form string="Order">
+            <form string="Order" delete="0">
                 <header>
                     <!-- Кнопка старта аренды -->
                     <button name="action_start_rental"
                             type="object"
                             string="Start Rental"
                             class="btn-primary"
-                            invisible="status != 'draft'" />
+                            invisible="status_code != 'draft'" />
 
                     <!-- Кнопка окончания аренды -->
                     <button name="action_end_rental"
                             type="object"
                             string="End Rental"
                             class="btn-danger"
-                            invisible="status != 'active'" />
+                            invisible="status_code != 'active'" />
 
                     <button name="action_cancel"
                             type="object" string="Cancel"
-                            invisible="status not in ['draft', 'active']"
+                            invisible="status_code not in ['draft', 'active']"
                             class="btn-secondary"/>
 
                     <button name="action_open_photo_wizard"
@@ -56,9 +88,8 @@
                             icon="fa-camera"
                             class="oe_highlight"/>
 
-                    
-                    <field name="status" widget="statusbar"
-                           statusbar_visible="draft,active,done"/>
+                    <field name="status_id" widget="statusbar" options="{'clickable':1}"/>
+
                 </header>
                 <sheet>
                     <field name="currency_id" invisible="1"/>
@@ -93,16 +124,36 @@
         </field>
     </record>
 
+    <record id="rental_vehicles.order_graph" model="ir.ui.view">
+        <field name="name">rental_vehicles.order.graph</field>
+        <field name="model">rental_vehicles.order</field>
+        <field name="arch" type="xml">
+            <graph string="Orders" type="bar" disable_linking="0" stacked="1">
+                <field name="start_date"/>
+                <field name="vehicle_id"/>
+                <field name="amount_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
     <record id="rental_vehicles.order_search" model="ir.ui.view">
         <field name="name">Order</field>
         <field name="model">rental_vehicles.order</field>
         <field name="arch" type="xml">
             <search string="Orders">
-                <filter name="search_status"
+                <filter name="status_active"
                         string="Active"
-                        domain="[('status', '=', 'active')]"/>
+                        domain="[('status_code', '=', 'active')]"/>
+                <filter name="status_not_cancelled"
+                        string="Valid"
+                        domain="[('status_code', 'in', ['active', 'done'])]"/>
                 <filter string="Start Date" name="filter_srart_date" date="start_date" default_period="month"/>
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+
+                <searchpanel>
+                    <field name="status_id" string="Status" select="multi" icon="fa-filter" color="#875A7B"/>
+                    <field name="office_id" string="Office" enable_counters="1" icon="fa-globe" color="red"/>
+                </searchpanel>
             </search>
         </field>
     </record>
@@ -110,7 +161,7 @@
     <record id="rental_vehicles.order_window" model="ir.actions.act_window">
         <field name="name">Orders</field>
         <field name="res_model">rental_vehicles.order</field>
-        <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_search_status': 1}</field>
+        <field name="view_mode">list,form,graph</field>
+        <field name="context">{'search_default_status_not_cancelled': 1}</field>
     </record>
 </odoo>

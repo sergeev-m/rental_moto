@@ -18,7 +18,7 @@
         <field name="name">rental_vehicles.type.list</field>
         <field name="model">rental_vehicles.vehicle.type</field>
         <field name="arch" type="xml">
-            <list>
+            <list editable="top">
                 <field name="name"/>
             </list>
         </field>

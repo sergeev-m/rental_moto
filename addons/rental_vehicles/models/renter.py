@@ -27,16 +27,16 @@ class Renter(models.Model):
     active = fields.Boolean(default=True)
     note = fields.Text("Notes")
 
-    @api.depends("order_ids.status")
+    @api.depends("order_ids.status_id")
     def _compute_total_rentals(self):
         for rec in self:
-            rec.total_rentals = len(rec.order_ids.filtered(lambda r: r.status == "done"))
+            rec.total_rentals = len(rec.order_ids.filtered(lambda r: r.status_id.code == "done"))
 
-    @api.depends("order_ids.amount_total", "order_ids.status")
+    @api.depends("order_ids.amount_total", "order_ids.status_id")
     def _compute_total_spent(self):
         for rec in self:
             rec.total_spent = sum(
                 rec.order_ids
-                .filtered(lambda r: r.status == "done")
+                .filtered(lambda r: r.status_id.code == "done")
                 .mapped('amount_total')
             )
