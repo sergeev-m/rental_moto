@@ -31,7 +31,7 @@ class Payout(models.Model):
         store=True
     )
 
-    @api.depends("manager_payout_ids")
+    @api.depends("manager_payout_ids.total_payout")
     def _compute_total_payout(self):
         for rec in self:
             rec.total_payout = sum(rec.manager_payout_ids.mapped('total_payout'))
