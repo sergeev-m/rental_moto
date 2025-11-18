@@ -1,23 +1,29 @@
 <odoo>
-  <record id="rental_vehicles.office_form" model="ir.ui.view">
-    <field name="name">rental_vehicles.office.form</field>
-    <field name="model">rental_vehicles.office</field>
-    <field name="arch" type="xml">
-      <form string="Rental office">
-        <sheet>
-          <group>
-            <field name="name"/>
-            <field name="city"/>
-            <field name="country_id"/>
-            <field name="currency_id"/>
-            <field name="vehicle_ids"/>
-          </group>
-        </sheet>
-      </form>
-    </field>
-  </record>
+    <record id="rental_vehicles.office_form" model="ir.ui.view">
+        <field name="name">rental_vehicles.office.form</field>
+        <field name="model">rental_vehicles.office</field>
+        <field name="arch" type="xml">
+            <form string="Rental office">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="city"/>
+                            <field name="country_id"/>
+                            <field name="currency_id"/>
+                        </group>
+                        <group>
+                            <field name="salary_fixed_usd"/>
+                            <field name="salary_percent"/>
+                        </group>
+                    </group>
+                    <field name="vehicle_ids"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-  <record id="rental_vehicles.office_list" model="ir.ui.view">
+    <record id="rental_vehicles.office_list" model="ir.ui.view">
         <field name="name">rental_vehicles.office.list</field>
         <field name="model">rental_vehicles.office</field>
         <field name="arch" type="xml">
@@ -26,6 +32,8 @@
                 <field name="city"/>
                 <field name="country_id"/>
                 <field name="currency_id"/>
+                <field name="salary_fixed_usd" optional="hide"/>
+                <field name="salary_percent" optional="hide"/>
             </list>
         </field>
     </record>

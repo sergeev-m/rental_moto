@@ -23,6 +23,12 @@
               action="rental_vehicles.maintenance_due_window"
               sequence="30"/>
 
+    <menuitem id="menu_rental_vehicles_payout"
+              name="Payouts"
+              parent="menu_rental_vehicles_root"
+              action="rental_vehicles.payout_window"
+              sequence="40"/>
+
     <!-- Submenu: References -->
     <menuitem id="menu_rental_vehicles_reference_root"
               name="References"

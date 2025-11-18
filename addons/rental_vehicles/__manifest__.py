@@ -19,6 +19,7 @@
         "views/maintenance.xml",
         "views/maintenance_plan.xml",
         "views/maintenance_due_view.xml",
+        "views/payout.xml",
         "wizard/renter_photo_wizard.xml",
         "views/menu.xml",
     ],

@@ -22,6 +22,9 @@ class RentalOffice(models.Model):
         'office_id',
         string='Vehicles',
     )
+    salary_fixed_usd = fields.Float("Fixed Salary (USD)", default=150)
+    salary_percent = fields.Float("Percent from Revenue (%)", default=30)
+
 
     def _compute_name(self):
         for rec in self:
