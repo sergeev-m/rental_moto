@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.tools import format_date
 
 
 class Vehicle(models.Model):
@@ -31,6 +32,40 @@ class Vehicle(models.Model):
     )
     maintenance_ids = fields.One2many("rental_vehicles.maintenance", "vehicle_id", string="Maintenance")
     order_ids = fields.One2many("rental_vehicles.order", "vehicle_id", string="Заказы")
+
+    maintenance_due_summary = fields.Json(
+        string="Upcoming Maintenance Summary",
+        compute="_compute_maintenance_due_summary",
+        store=False,
+    )
+
+    @api.depends('maintenance_due_ids', 
+                 'maintenance_due_ids.service_type_id',
+                 'maintenance_due_ids.next_service_mileage',
+                 'maintenance_due_ids.km_to_due',
+                 'maintenance_due_ids.is_due',
+                 'maintenance_due_ids.overdue')
+    def _compute_maintenance_due_summary(self):
+        for vehicle in self:
+            lines = []
+            for line in vehicle.maintenance_due_ids:
+                next_service_date_str = ''
+                if line.next_service_date:
+                    next_service_date_str = format_date(
+                        line.env,
+                        line.next_service_date,
+                        date_format='MMM yy'
+                    )
+                lines.append({
+                    "service": line.service_type_id.display_name,
+                    "next_service_mileage": line.next_service_mileage,
+                    'next_service_date': next_service_date_str,
+                    "km_to_due": line.km_to_due,
+                    'days_to_due': line.days_to_due,
+                    'is_due': line.is_due,
+                    "overdue": line.overdue,
+                })
+            vehicle.maintenance_due_summary = lines
 
     @api.depends('model_id.manufacturer_id.name', 'model_id.name', 'plate_number')
     def _compute_name(self):

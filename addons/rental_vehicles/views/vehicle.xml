@@ -83,10 +83,80 @@
     </field>
   </record>
 
+    <record id="view_vehicle_maintenance_kanban" model="ir.ui.view">
+        <field name="name">vehicle.maintenance.kanban</field>
+        <field name="model">rental_vehicles.vehicle</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" sample="1" quick_create="false">
+                <field name="name"/>
+                <field name="maintenance_due_summary"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_card o_kanban_card_hover">
+
+                            <div class="o_kanban_card_header d-flex mb-2" style="justify-content: space-between;">
+                                <strong t-esc="record.name.value"/>
+                                <div>
+                                    <field name="status"
+                                           widget="label_selection"
+                                           options="{'classes': {'available': 'success', 'rented': 'info', 'default': 'warning'}}" class="ms-auto"/>
+                                </div>
+                            </div>
+
+                            <div class="o_kanban_card_body">
+                                <t t-set="lines"
+                                   t-value="JSON.parse(record.maintenance_due_summary.value || '[]')"
+                                />
+
+                                <t t-if="lines.length == 0">
+                                    <div class="fs-5 text-muted">Нет предстоящих ТО</div>
+                                </t>
+
+                                <!-- Шапка таблицы -->
+                                <div class="d-flex mb-1" style="font-weight:600; font-size:13px;">
+                                    <div style="width: 55%;"></div>
+                                    <div style="width: 22%; text-align:right;">Пробег</div>
+                                    <div style="width: 23%; text-align:right;">Остаток</div>
+                                </div>
+
+                                <t t-foreach="lines" t-as="item">
+                                    <div class="d-flex mb-1"
+                                         style="line-height:14px;"
+                                         t-att-class="item.overdue ? 'text-danger' : (item.is_due ? 'text-warning' : '')"
+                                    >
+                                        
+                                        <!-- Название услуги -->
+                                        <div class="fs-5" style="width: 55%;">
+                                            <t t-esc="item.service"/>
+                                        </div>
+
+                                        <!-- Следующий пробег -->
+                                        <div class="fs-5" style="width: 22%; text-align:right;">
+                                                <t t-esc="item.next_service_mileage"/>
+                                        </div>
+
+                                        <!-- Остаток км -->
+                                        <div class="fs-5" style="width: 23%; text-align:right;">
+                                                <t t-esc="item.km_to_due"/>
+                                        </div>
+                                        <div>
+                                            <t t-esc="item.next_service_date"/>
+                                        </div>
+                                   </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
   <record model="ir.actions.act_window" id="rental_vehicles.vehicle_window">
     <field name="name">Vehicle</field>
     <field name="res_model">rental_vehicles.vehicle</field>
-    <field name="view_mode">list,form</field>
+    <field name="view_mode">list,form,kanban</field>
   </record>
 
 </odoo>

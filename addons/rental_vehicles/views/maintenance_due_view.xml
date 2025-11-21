@@ -62,50 +62,6 @@
         </field>
     </record>
 
-    <!-- Kanban -->
-    <!-- <record id="rental_vehicles.maintenance_due_kanban" model="ir.ui.view">
-        <field name="name">rental_vehicles.maintenance.due.kanban</field>
-        <field name="model">rental_vehicles.maintenance.due</field>
-        <field name="arch" type="xml">
-          <kanban default_group_by="service_type_id"
-                  class="o_kanban_small_column">
-            <field name="color"/>
-            <templates>
-              <t t-name="kanban-box">
-                <div t-attf-class="o_kanban_record oe_kanban_global_click oe_kanban_color_#{record.color.raw_value}">
-                
-                  <div class="o_kanban_details">
-                    <strong>
-                      <field name="vehicle_id"/>
-                    </strong>
-                    <div class="text-muted">
-                      <field name="service_type_id"/>
-                    </div>
-                    <div>
-                      <span>Next date: </span><field name="next_service_date"/>
-                    </div>
-                    <div>
-                      <span>Next km: </span><field name="next_service_mileage"/>
-                    </div>
-                    <div>
-                      <span>Δ days: </span><field name="days_to_due"/>
-                      <span style="margin-left:8px">Δ km: </span><field name="km_to_due"/>
-                    </div>
-                  </div>
-                  <div class="o_kanban_footer">
-                    <button type="object" name="action_perform_service"
-                            class="btn btn-primary btn-sm"
-                            invisible="is_due == False">
-                      Провести ТО
-                    </button>
-                  </div>
-                </div>
-              </t>
-            </templates>
-          </kanban>
-        </field>
-    </record> -->
-
     <record id="rental_vehicles.maintenance_due_search" model="ir.ui.view">
         <field name="name">rental_vehicles.maintenance.due.search</field>
         <field name="model">rental_vehicles.maintenance.due</field>
