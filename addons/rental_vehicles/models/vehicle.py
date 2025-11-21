@@ -42,7 +42,9 @@ class Vehicle(models.Model):
     @api.depends('maintenance_due_ids', 
                  'maintenance_due_ids.service_type_id',
                  'maintenance_due_ids.next_service_mileage',
+                 'maintenance_due_ids.next_service_date',
                  'maintenance_due_ids.km_to_due',
+                 'maintenance_due_ids.days_to_due',
                  'maintenance_due_ids.is_due',
                  'maintenance_due_ids.overdue')
     def _compute_maintenance_due_summary(self):
@@ -58,10 +60,8 @@ class Vehicle(models.Model):
                     )
                 lines.append({
                     "service": line.service_type_id.display_name,
-                    "next_service_mileage": line.next_service_mileage,
-                    'next_service_date': next_service_date_str,
-                    "km_to_due": line.km_to_due,
-                    'days_to_due': line.days_to_due,
+                    "next_service": line.next_service_mileage or next_service_date_str,
+                    "remaining": line.km_to_due or f'{line.days_to_due} days',
                     'is_due': line.is_due,
                     "overdue": line.overdue,
                 })

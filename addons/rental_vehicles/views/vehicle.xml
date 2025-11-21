@@ -130,14 +130,14 @@
                                             <t t-esc="item.service"/>
                                         </div>
 
-                                        <!-- Следующий пробег -->
+                                        <!-- Следующее ТО -->
                                         <div class="fs-5" style="width: 22%; text-align:right;">
-                                                <t t-esc="item.next_service_mileage"/>
+                                                <t t-esc="item.next_service"/>
                                         </div>
 
-                                        <!-- Остаток км -->
+                                        <!-- Остаток -->
                                         <div class="fs-5" style="width: 23%; text-align:right;">
-                                                <t t-esc="item.km_to_due"/>
+                                                <t t-esc="item.remaining"/>
                                         </div>
                                    </div>
                                 </t>
